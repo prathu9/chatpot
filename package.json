@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./backend/index.js",
     "dev": "nodemon ./backend/index.js",
+    "postinstall": "cd frontend && npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
