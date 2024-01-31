@@ -8,7 +8,7 @@ import {
     Button,
     useToast,
   } from "@chakra-ui/react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
   import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -43,7 +43,7 @@ const Login = () => {
 
         const {data} = await axios.post("http://localhost:5000/api/user/login", 
                         {email, password}, config);
-      
+      console.log("data", data)
         if(data){
           toast({
             title: "Login Successful",
@@ -59,7 +59,7 @@ const Login = () => {
         else{
           toast({
             title: "Error while login",
-            description: `Data ${data}`,
+            description: `Data is no available for given credentials`,
             status: "error",
             duration: 5000,
             isClosable: true,
@@ -69,14 +69,27 @@ const Login = () => {
         setLoading(false);
       }
       catch(err){
-        toast({
-          title: "Error Occureed!",
-          description: err as string,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom"
-        });
+        if(err instanceof AxiosError){
+          toast({
+            title: "Error Occured!",
+            description: err.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom"
+          });
+        }
+        else{
+          toast({
+            title: "Error Occured!",
+            description: "Something went wrong check console",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom"
+          });
+          console.log("Error", err);
+        }
 
         setLoading(false);
       }
@@ -84,7 +97,7 @@ const Login = () => {
   
     return (
       <VStack spacing="5px">
-        <FormControl id="email" isRequired>
+        <FormControl id="login-email" isRequired>
           <FormLabel>Email</FormLabel>
           <Input
           value={email}
@@ -92,7 +105,7 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </FormControl>
-        <FormControl id="password" isRequired>
+        <FormControl id="login-password" isRequired>
           <FormLabel>Password</FormLabel>
           <InputGroup>
             <Input

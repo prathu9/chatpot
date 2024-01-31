@@ -11,7 +11,7 @@ const ChatPage = () => {
 
     const fetchChats = async () => {
         const {data} = await axios.get("http://localhost:5000/api/chats");
-        
+        console.log("data", data)
         setChats(data);
     }
 
