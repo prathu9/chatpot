@@ -3,6 +3,7 @@ import {BellIcon, ChevronDownIcon} from "@chakra-ui/icons";
 // import { useState } from "react";
 import { ChatState } from "../../context/ChatProvider";
 import ProfileModal from "./ProfileModel";
+import { useNavigate } from "react-router-dom";
 
 const SideDrawer = () => {
 //   const [search, setSearch] = useState();
@@ -11,9 +12,15 @@ const SideDrawer = () => {
 //   const [loadingChat, setLoadingChat] = useState();
 
   const {user} = ChatState();
+  const navigate = useNavigate();
 
   if(!user){
     return <h1>User not available</h1>
+  }
+
+  const logoutHandler = () => {
+    localStorage.removeItem("userInfo");
+    navigate("/");
   }
 
   return (
@@ -53,7 +60,7 @@ const SideDrawer = () => {
                         <MenuItem>My Profile</MenuItem>
                     </ProfileModal>
                     <MenuDivider/>
-                    <MenuItem>Logout</MenuItem>
+                    <MenuItem onClick={logoutHandler}>Logout</MenuItem>
                 </MenuList>
             </Menu>
         </div>
