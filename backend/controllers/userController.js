@@ -60,7 +60,6 @@ const authUser = asyncHandler(async(req, res) => {
         }
     }
     catch(err){
-        console.log("err", err);
         res.status(500);
         throw new Error("Server error occurred");
     }
