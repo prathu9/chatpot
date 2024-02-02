@@ -70,9 +70,9 @@ export const ChatState = () => {
       user: null,
       setUser: null,
       selectedChat: null,
-      setSelectedChat: null,
+      setSelectedChat: () => {},
       chats: [],
-      setChats: null
+      setChats: () => {}
     };
   }
 };
