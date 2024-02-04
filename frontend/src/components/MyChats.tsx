@@ -5,6 +5,7 @@ import { ChatState, ChatType, User } from "../context/ChatProvider";
 import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
 import { getSenderName } from "../utils/chatLogics";
+import GroupChatModel from "./Miscellaneous/GroupChatModal";
 
 function MyChats() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
@@ -64,11 +65,15 @@ function MyChats() {
         alignItems="center"
       >
         My Chats
-        <Button display="flex"
-          fontSize={{base: "18px", md: "10px", lg: "18px"}}
-          rightIcon={<AddIcon />}>
-          New Group Chat
-        </Button>
+        <GroupChatModel>
+          <Button
+            display="flex"
+            fontSize={{ base: "18px", md: "10px", lg: "18px" }}
+            rightIcon={<AddIcon />}
+          >
+            New Group Chat
+          </Button>
+        </GroupChatModel>
       </Box>
       <Box
         display="flex"
@@ -80,34 +85,30 @@ function MyChats() {
         borderRadius="lg"
         overflowY="hidden"
       >
-          {chats? (
-            <Stack>
-              {
-                chats.map((chat: ChatType) => (
-                  <Box
-                    onClick={() => setSelectedChat(chat)}
-                    cursor="pointer"
-                    bg={selectedChat === chat?"#38B2AC":"E8E8E8"}
-                    color={selectedChat === chat? "white":"black"}
-                    px={3}
-                    py={2}
-                    borderRadius="lg"
-                    key={chat._id}
-                  >
-                    <Text>
-                      {
-                        !chat.isGroupChat? 
-                        getSenderName(loggedUser, chat.users):
-                        chat.chatName
-                      }
-                    </Text>
-                  </Box>
-                ))
-              }
-            </Stack>
-          ):(
-            <ChatLoading />
-          )}
+        {chats ? (
+          <Stack>
+            {chats.map((chat: ChatType) => (
+              <Box
+                onClick={() => setSelectedChat(chat)}
+                cursor="pointer"
+                bg={selectedChat === chat ? "#38B2AC" : "E8E8E8"}
+                color={selectedChat === chat ? "white" : "black"}
+                px={3}
+                py={2}
+                borderRadius="lg"
+                key={chat._id}
+              >
+                <Text>
+                  {!chat.isGroupChat
+                    ? getSenderName(loggedUser, chat.users)
+                    : chat.chatName}
+                </Text>
+              </Box>
+            ))}
+          </Stack>
+        ) : (
+          <ChatLoading />
+        )}
       </Box>
     </Box>
   );
