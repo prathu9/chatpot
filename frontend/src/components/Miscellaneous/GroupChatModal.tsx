@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { ReactNode, useState } from "react";
 import { ChatState, User } from "../../context/ChatProvider";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import UserListItem from "../UserListItem";
 import UserBadgeItem from "../UserBadgeItem";
 
@@ -68,10 +68,65 @@ const GroupChatModel = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    if(!groupChatName || !selectedUsers){
+      toast({
+        title: "Please fill all the fields",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "top"
+      });
+      return;
+    }
+
+    try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        }
+
+        const {data} = await axios.post("http://localhost:5000/api/chat/group", {
+          chatName: groupChatName,
+          users: JSON.stringify(selectedUsers.map((u) => u._id))
+        }, config);
+
+        setChats([data, ...chats]);
+        onClose();
+        toast({
+          title: "New Group Chat Created!",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom"
+        })
+    } catch (error) {
+      if(error instanceof AxiosError){
+        toast({
+          title: "Failed to Create the Chat!",
+          description: error.response?.data,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom"
+        })
+      }
+      else{
+        console.log(error);
+        toast({
+          title: "Error occured",
+          description: `Some error occured while add group`,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom"
+        });
+      }
+    }
+  };
 
   const handleGroup = (userToAdd: User) => {
-    console.log(userToAdd);
     if (selectedUsers.includes(userToAdd)) {
       toast({
         title: "User already added",
