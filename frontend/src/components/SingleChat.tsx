@@ -3,8 +3,10 @@ import { ChatState } from "../context/ChatProvider";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { getSenderName, getSenderDetail } from "../utils/chatLogics";
 import ProfileModal from "./Miscellaneous/ProfileModel";
+import UpdatedGroupChatModal from "./Miscellaneous/UpdateGroupChatModal";
 
-const SingleChat = () => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SingleChat = ({fetchAgain, setFetchAgain}: any) => {
     const {user, selectedChat, setSelectedChat} = ChatState();
     
     return(
@@ -36,6 +38,10 @@ const SingleChat = () => {
                         ):(
                             <>
                                 {selectedChat.chatName.toUpperCase()}
+                                <UpdatedGroupChatModal
+                                    fetchAgain={fetchAgain}
+                                    setFetchAgain={setFetchAgain}
+                                />
                             </>
                         )
                     }
