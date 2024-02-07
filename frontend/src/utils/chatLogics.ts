@@ -6,3 +6,10 @@ export const getSenderName = (loggedUser: User | null, users: User[]) => {
     }
     return users.filter((user) => loggedUser._id !== user._id)[0].name;
 }
+
+export const getSenderDetail = (loggedUser: User | null, users: User[]) => {
+    if(!loggedUser){
+        return null;
+    }
+    return users.filter((user) => loggedUser._id !== user._id)[0];
+}

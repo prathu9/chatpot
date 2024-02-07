@@ -7,10 +7,10 @@ import ChatLoading from "./ChatLoading";
 import { getSenderName } from "../utils/chatLogics";
 import GroupChatModel from "./Miscellaneous/GroupChatModal";
 
-function MyChats() {
+function MyChats({fetchAgain}:{fetchAgain:boolean}) {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
-
+console.log(fetchAgain)
   const toast = useToast();
 
   const fetchChats = useCallback(async () => {

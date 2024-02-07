@@ -18,7 +18,7 @@ import { ViewIcon } from "@chakra-ui/icons";
 
 type ProfileModal = {
   user: User;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 const ProfileModal = ({ user, children }: ProfileModal) => {
