@@ -3,7 +3,6 @@ import { User } from "../context/ChatProvider";
 import { CloseIcon } from "@chakra-ui/icons";
 
 const UserBadgeItem = ({user, handleFunction}: {user: User, handleFunction: () => void}) => {
-    console.log(user, handleFunction)
     return(
         <Badge
             px={2}

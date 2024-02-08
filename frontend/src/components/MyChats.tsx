@@ -6,11 +6,11 @@ import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
 import { getSenderName } from "../utils/chatLogics";
 import GroupChatModel from "./Miscellaneous/GroupChatModal";
-
-function MyChats({fetchAgain}:{fetchAgain:boolean}) {
+//{fetchAgain}:{fetchAgain:boolean}
+function MyChats() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
-console.log(fetchAgain)
+
   const toast = useToast();
 
   const fetchChats = useCallback(async () => {
