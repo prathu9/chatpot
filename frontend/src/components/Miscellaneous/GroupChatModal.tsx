@@ -178,7 +178,7 @@ const GroupChatModel = ({ children }: { children: ReactNode }) => {
             <Box display="flex">
               {selectedUsers.map((u) => (
                 <UserBadgeItem
-                  key={user._id}
+                  key={u._id}
                   user={u}
                   handleFunction={() => handleDelete(u)}
                 />
