@@ -19,7 +19,7 @@ export type ChatType = {
   chatName: string;
   isGroupChat: boolean;
   users: User[];
-  groupAdmin?: string;
+  groupAdmin?: User;
 };
 
 type ChatContextValueType = {
