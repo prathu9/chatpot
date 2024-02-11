@@ -1,13 +1,19 @@
 import { Box, FormControl, IconButton, Input, Spinner, Text, useToast } from "@chakra-ui/react";
-import { ChatState } from "../context/ChatProvider";
+import { ChatState, ChatType } from "../context/ChatProvider";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { getSenderName, getSenderDetail } from "../utils/chatLogics";
 import ProfileModal from "./Miscellaneous/ProfileModal";
 import UpdatedGroupChatModal from "./Miscellaneous/UpdateGroupChatModal";
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import ScrollableChat from "./ScrollableChat";
 import { MessageType } from "../utils/types";
+import { io, Socket } from "socket.io-client";
+import { DefaultEventsMap } from "@socket.io/component-emitter";
+
+const ENDPOINT = "http://localhost:5000";
+let socket: Socket;
+let selectedChatCompare: ChatType | null;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
@@ -15,6 +21,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
+  const [socketConnected, setSocketConnected] = useState<boolean>(false);
 
   const toast = useToast();
 
@@ -22,7 +29,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
     setNewMessage(e.target.value);
   }
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     if(!selectedChat) return;
 
     try {
@@ -37,6 +44,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
 
         setMessages(data);
         setLoading(false);
+
+        socket.emit('join chat', selectedChat._id);
     } catch (error) {
         toast({
             title: "Error Occured!",
@@ -47,11 +56,30 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
             position: "bottom"
         });
     }
-  }
+  },[selectedChat, toast, user?.token])
 
   useEffect(() => {
     fetchMessages();
-  }, [selectedChat])
+    
+    selectedChatCompare = selectedChat;
+  }, [selectedChat, fetchMessages]);
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connection", () => setSocketConnected(true));
+  },[])
+
+  useEffect(() => {
+    socket.on("message recieved", (newMessageReceived) => {
+        if(!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id){
+            // give notification
+        }
+        else{
+            setMessages([...messages, newMessageReceived]);
+        }
+    })
+  })
 
   const sendMessage = async (e: KeyboardEvent<HTMLDivElement>) => {
     if(e.key === "Enter" && newMessage){
@@ -69,7 +97,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
                 content: newMessage
             }, config)
 
-            console.log(data)
+            socket.emit("new message", data);
             setMessages([...messages, data]);
         } catch (error) {   
             toast({

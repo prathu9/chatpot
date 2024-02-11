@@ -9,7 +9,6 @@ type ScrollableChatProps = {
 }
 
 const ScrollableChat = ({messages}: ScrollableChatProps) => {
-    console.log(messages)
     const {user} = ChatState();
 
     if(!user){
@@ -18,7 +17,7 @@ const ScrollableChat = ({messages}: ScrollableChatProps) => {
 
     return(
         <ScrollableFeed>
-            {messages && messages.map((currentMessage, index) =>{console.log(isSameSenderMargin(messages, currentMessage, index, user?._id), currentMessage.content);return(
+            {messages && messages.map((currentMessage, index) => (
                 <div style={{display: "flex"}} key={currentMessage._id}>
                      {
                         (isSameSender(messages, currentMessage, index, user._id)
@@ -52,7 +51,7 @@ const ScrollableChat = ({messages}: ScrollableChatProps) => {
                         {currentMessage.content}
                      </span>
                 </div>
-            )})}
+            ))}
         </ScrollableFeed>
     );
 }
