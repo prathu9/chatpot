@@ -9,7 +9,6 @@ import axios from "axios";
 import ScrollableChat from "./ScrollableChat";
 import { MessageType } from "../utils/types";
 import { io, Socket } from "socket.io-client";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
 
 const ENDPOINT = "http://localhost:5000";
 let socket: Socket;
@@ -22,11 +21,32 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [socketConnected, setSocketConnected] = useState<boolean>(false);
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const toast = useToast();
 
   const typingHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setNewMessage(e.target.value);
+
+    if(!socketConnected) return;
+
+    if(!typing){
+        setTyping(true);
+        socket.emit("typing", selectedChat?._id);
+    }
+
+    const lastTypingTime = new Date().getTime();
+    const timerLength = 3000;
+    setTimeout(() => {
+        const timeNow = new Date().getTime();
+        const timeDiff = timeNow - lastTypingTime;
+
+        if(timeDiff >= timerLength && typing){
+            socket.emit("stop typing", selectedChat?._id);
+            setTyping(false); 
+        }
+    }, timerLength)
   }
 
   const fetchMessages = useCallback(async () => {
@@ -67,7 +87,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
-    socket.on("connection", () => setSocketConnected(true));
+    socket.on("connected", () => setSocketConnected(true));
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));
   },[])
 
   useEffect(() => {
@@ -83,6 +105,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
 
   const sendMessage = async (e: KeyboardEvent<HTMLDivElement>) => {
     if(e.key === "Enter" && newMessage){
+        socket.emit("stop typing", selectedChat?._id);
         try {
             const config = {
                 headers: {
@@ -175,6 +198,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
               </div> 
             )}
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
+                {isTyping? <div>Loading...</div>:null}
                 <Input
                     variant="filled"
                     bg="#E0E0E0"
