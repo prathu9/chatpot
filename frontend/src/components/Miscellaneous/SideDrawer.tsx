@@ -22,7 +22,7 @@ import {
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { ChatState, ChatType } from "../../context/ChatProvider";
-import ProfileModal from "./ProfileModel";
+import ProfileModal from "./ProfileModal";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import ChatLoading from "../ChatLoading";
