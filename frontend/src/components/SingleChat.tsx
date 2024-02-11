@@ -1,16 +1,18 @@
 import { Box, FormControl, IconButton, Input, Spinner, Text, useToast } from "@chakra-ui/react";
-import { ChatState, ChatType } from "../context/ChatProvider";
+import { ChatState } from "../context/ChatProvider";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { getSenderName, getSenderDetail } from "../utils/chatLogics";
 import ProfileModal from "./Miscellaneous/ProfileModal";
 import UpdatedGroupChatModal from "./Miscellaneous/UpdateGroupChatModal";
-import { ChangeEvent,useState } from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import axios from "axios";
+import ScrollableChat from "./ScrollableChat";
+import { MessageType } from "../utils/types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
   const { user, selectedChat, setSelectedChat } = ChatState();
-  const [messages, setMessages] = useState<ChatType[]>([]);
+  const [messages, setMessages] = useState<MessageType[]>([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
 
@@ -20,9 +22,38 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
     setNewMessage(e.target.value);
   }
 
- 
+  const fetchMessages = async () => {
+    if(!selectedChat) return;
 
-  const sendMessage = async (e: KeyboardEvent) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user?.token}`
+            }
+        }
+
+        setLoading (true);
+        const {data} = await axios.get(`http://localhost:5000/api/message/${selectedChat._id}`, config);
+
+        setMessages(data);
+        setLoading(false);
+    } catch (error) {
+        toast({
+            title: "Error Occured!",
+            description: "Failed to load the Messages",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom"
+        });
+    }
+  }
+
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedChat])
+
+  const sendMessage = async (e: KeyboardEvent<HTMLDivElement>) => {
     if(e.key === "Enter" && newMessage){
         try {
             const config = {
@@ -38,7 +69,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
                 content: newMessage
             }, config)
 
-            
+            console.log(data)
             setMessages([...messages, data]);
         } catch (error) {   
             toast({
@@ -86,6 +117,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
                 <UpdatedGroupChatModal
                   fetchAgain={fetchAgain}
                   setFetchAgain={setFetchAgain}
+                  fetchMessages={fetchMessages}
                 />
               </>
             )}
@@ -111,8 +143,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
               />
             ) : (
               <div>
-
-              </div>
+                <ScrollableChat messages={messages}/>
+              </div> 
             )}
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
                 <Input
