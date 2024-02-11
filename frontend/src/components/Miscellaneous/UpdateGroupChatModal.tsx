@@ -23,7 +23,7 @@ import axios, { AxiosError } from "axios";
 import UserListItem from "../UserListItem";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const UpdatedGroupChatModal = ({ fetchAgain, setFetchAgain }: any) => {
+const UpdatedGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [groupChatName, setGroupChatName] = useState("");
   const [search, setSearch] = useState("");
@@ -118,8 +118,10 @@ const UpdatedGroupChatModal = ({ fetchAgain, setFetchAgain }: any) => {
       }, config);
 
       userToRemove._id === user?._id? setSelectedChat(null):setSelectedChat(data);
-      setLoading(false);
+    
       setFetchAgain(!fetchAgain);
+      fetchMessages();
+      setLoading(false);
 
     } catch (error) {
       if(error instanceof AxiosError){
