@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { MessageType } from "../utils/types";
 
 export type User = {
   name: string;
@@ -29,6 +30,8 @@ type ChatContextValueType = {
   setSelectedChat: React.Dispatch<React.SetStateAction<ChatType | null>>;
   chats: ChatType[];
   setChats: React.Dispatch<React.SetStateAction<ChatType[]>>;
+  notifications: MessageType[];
+  setNotifications: React.Dispatch<React.SetStateAction<MessageType[]>>;
 };
 
 const ChatContext = createContext<ChatContextValueType | null>(null);
@@ -41,6 +44,7 @@ const ChatProvider = ({ children }: ChatProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [selectedChat, setSelectedChat] = useState<ChatType | null>(null);
   const [chats, setChats] = useState<ChatType[]>([]);
+  const [notifications, setNotifications] = useState<MessageType[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,25 +59,27 @@ const ChatProvider = ({ children }: ChatProviderProps) => {
 
   return (
     <ChatContext.Provider
-      value={{ user, setUser, selectedChat, setSelectedChat, chats, setChats }}
+      value={{ user, setUser, selectedChat, setSelectedChat, chats, setChats, notifications, setNotifications }}
     >
       {children}
     </ChatContext.Provider>
   );
 };
 
-export const ChatState = () => {
+export const ChatState = ():ChatContextValueType => {
   const chatInfo = useContext(ChatContext);
   if (chatInfo) {
     return { ...chatInfo };
   } else {
     return {
       user: null,
-      setUser: null,
+      setUser: () => {},
       selectedChat: null,
       setSelectedChat: () => {},
       chats: [],
-      setChats: () => {}
+      setChats: () => {},
+      notifications: [],
+      setNotifications: () => {} 
     };
   }
 };

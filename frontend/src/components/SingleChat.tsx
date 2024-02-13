@@ -16,7 +16,7 @@ let selectedChatCompare: ChatType | null;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
-  const { user, selectedChat, setSelectedChat } = ChatState();
+  const { user, selectedChat, setSelectedChat, notifications, setNotifications } = ChatState();
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
@@ -95,7 +95,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: any) => {
   useEffect(() => {
     socket.on("message recieved", (newMessageReceived) => {
         if(!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id){
-            // give notification
+            if(!notifications.includes(newMessageReceived)){
+              setNotifications([newMessageReceived, ...notifications]);
+              setFetchAgain(!fetchAgain);
+            }
         }
         else{
             setMessages([...messages, newMessageReceived]);

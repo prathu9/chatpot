@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import ChatLoading from "../ChatLoading";
 import UserListItem from "../UserListItem";
+import { getSenderName } from "../../utils/chatLogics";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
@@ -35,7 +36,14 @@ const SideDrawer = () => {
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
 
-  const { user, setSelectedChat, chats, setChats } = ChatState();
+  const {
+    user,
+    setSelectedChat,
+    chats,
+    setChats,
+    notifications,
+    setNotifications,
+  } = ChatState();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -93,46 +101,45 @@ const SideDrawer = () => {
   };
 
   const accessChat = async (userId: string) => {
-    console.log(userId);
-    try{
+    try {
       setLoadingChat(true);
       const headers = {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`
-      }
+        Authorization: `Bearer ${user.token}`,
+      };
 
-      const {data} = await axios.post("http://localhost:5000/api/chat", {userId}, {headers});
-      if(!chats.find((c: ChatType) => c._id === data._id)){
-        setChats([data, ...chats])
+      const { data } = await axios.post(
+        "http://localhost:5000/api/chat",
+        { userId },
+        { headers }
+      );
+      if (!chats.find((c: ChatType) => c._id === data._id)) {
+        setChats([data, ...chats]);
       }
       setSelectedChat(data);
       setLoadingChat(false);
       onClose();
-
-    }
-    catch(error) { 
-      if(error instanceof AxiosError){
+    } catch (error) {
+      if (error instanceof AxiosError) {
         toast({
           title: "Error fetching the chat",
           description: error.message,
           status: "error",
           duration: 5000,
           isClosable: true,
-          position: "bottom-left"
-        })
-      }
-      else{
+          position: "bottom-left",
+        });
+      } else {
         toast({
           title: "Error Occured!",
           description: "Something went wrong check console",
           status: "error",
           duration: 5000,
           isClosable: true,
-          position: "bottom"
+          position: "bottom",
         });
       }
-     
-     }
+    }
   };
 
   return (
@@ -161,9 +168,45 @@ const SideDrawer = () => {
 
         <div>
           <Menu>
-            <MenuButton p={1}>
+            <MenuButton p={1} position="relative">
               <BellIcon fontSize="2xl" m={1} />
+              {notifications.length? (
+                <Box
+                  px="5px"
+                  w="fit-content"
+                  h="20px"
+                  position="absolute"
+                  left="20px"
+                  bg="red"
+                  color="white"
+                  borderRadius="45%"
+                  display="inline-block"
+                  zIndex={10}
+                  lineHeight={1.2}
+                >
+                  {notifications.length}
+                </Box>
+              ): null}
             </MenuButton>
+            <MenuList>
+              {!notifications.length && "No New Messages"}
+              {notifications.map((notif) => (
+                <MenuItem
+                  key={notif._id}
+                  onClick={() => {
+                    setSelectedChat(notif.chat);
+                    setNotifications(notifications.filter((n) => n !== notif));
+                  }}
+                >
+                  {notif.chat.isGroupChat
+                    ? `New Message in ${notif.chat.chatName}`
+                    : `New Message from ${getSenderName(
+                        user,
+                        notif.chat.users
+                      )}`}
+                </MenuItem>
+              ))}
+            </MenuList>
           </Menu>
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
@@ -209,7 +252,7 @@ const SideDrawer = () => {
                 />
               ))
             )}
-            {loadingChat && <Spinner ml="auto"  display="flex" />}
+            {loadingChat && <Spinner ml="auto" display="flex" />}
           </DrawerBody>
         </DrawerContent>
       </Drawer>
