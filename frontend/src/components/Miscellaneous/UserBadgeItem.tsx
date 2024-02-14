@@ -1,5 +1,5 @@
 import { Badge } from "@chakra-ui/react";
-import { User } from "../context/ChatProvider";
+import { User } from "../../context/ChatProvider";
 import { CloseIcon } from "@chakra-ui/icons";
 
 const UserBadgeItem = ({user, handleFunction}: {user: User, handleFunction: () => void}) => {

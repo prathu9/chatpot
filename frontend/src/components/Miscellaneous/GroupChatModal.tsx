@@ -16,8 +16,8 @@ import {
 import { ReactNode, useState } from "react";
 import { ChatState, User } from "../../context/ChatProvider";
 import axios, { AxiosError } from "axios";
-import UserListItem from "../UserListItem";
-import UserBadgeItem from "../UserBadgeItem";
+import UserListItem from "./UserListItem";
+import UserBadgeItem from "./UserBadgeItem";
 
 const GroupChatModel = ({ children }: { children: ReactNode }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();

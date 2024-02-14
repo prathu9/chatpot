@@ -17,13 +17,18 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { ChatState, User } from "../../context/ChatProvider";
-import { useState } from "react";
-import UserBadgeItem from "../UserBadgeItem";
+import { Dispatch, SetStateAction, useState } from "react";
+import UserBadgeItem from "./UserBadgeItem";
 import axios, { AxiosError } from "axios";
-import UserListItem from "../UserListItem";
+import UserListItem from "./UserListItem";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const UpdatedGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }: any) => {
+type UpdatedGroupChatModalType = {
+  fetchAgain: boolean,
+  setFetchAgain: Dispatch<SetStateAction<boolean>>,
+  fetchMessages: () => void
+}
+
+const UpdatedGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }: UpdatedGroupChatModalType) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [groupChatName, setGroupChatName] = useState("");
   const [search, setSearch] = useState("");

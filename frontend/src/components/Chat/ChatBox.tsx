@@ -1,14 +1,14 @@
 import { Box } from "@chakra-ui/react"
-// import { Dispatch, SetStateAction } from "react"
-import { ChatState } from "../context/ChatProvider"
+import { Dispatch, SetStateAction } from "react"
+import { ChatState } from "../../context/ChatProvider"
 import SingleChat from "./SingleChat"
 
-// type ChatBoxPropType = {
-//   fetchAgain: boolean,
-//   setFetchAgain: Dispatch<SetStateAction<boolean>>
-// }
-//{fetchAgain, setFetchAgain}: ChatBoxPropType
-function ChatBox() {
+type ChatBoxPropType = {
+  fetchAgain: boolean,
+  setFetchAgain: Dispatch<SetStateAction<boolean>>
+}
+
+function ChatBox({fetchAgain, setFetchAgain}: ChatBoxPropType) {
  
   const {selectedChat} = ChatState();
   return (
@@ -22,7 +22,7 @@ function ChatBox() {
       borderRadius="lg"
       borderWidth="1px"
     >
-      <SingleChat />
+      <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
     </Box>
   )
 }

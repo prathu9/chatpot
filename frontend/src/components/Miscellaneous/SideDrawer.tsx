@@ -25,8 +25,8 @@ import { ChatState, ChatType } from "../../context/ChatProvider";
 import ProfileModal from "./ProfileModal";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
-import ChatLoading from "../ChatLoading";
-import UserListItem from "../UserListItem";
+import ChatLoading from "./ChatLoading";
+import UserListItem from "./UserListItem";
 import { getSenderName } from "../../utils/chatLogics";
 
 const SideDrawer = () => {

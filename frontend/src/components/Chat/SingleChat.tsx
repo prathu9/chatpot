@@ -1,13 +1,13 @@
 import { Box, FormControl, IconButton, Input, Spinner, Text, useToast } from "@chakra-ui/react";
-import { ChatState, ChatType } from "../context/ChatProvider";
+import { ChatState, ChatType } from "../../context/ChatProvider";
 import { ArrowBackIcon } from "@chakra-ui/icons";
-import { getSenderName, getSenderDetail } from "../utils/chatLogics";
-import ProfileModal from "./Miscellaneous/ProfileModal";
-import UpdatedGroupChatModal from "./Miscellaneous/UpdateGroupChatModal";
+import { getSenderName, getSenderDetail } from "../../utils/chatLogics";
+import ProfileModal from "../Miscellaneous/ProfileModal";
+import UpdatedGroupChatModal from "../Miscellaneous/UpdateGroupChatModal";
 import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import ScrollableChat from "./ScrollableChat";
-import { MessageType } from "../utils/types";
+import ScrollableChat from "../Miscellaneous/ScrollableChat";
+import { MessageType } from "../../utils/types";
 import { io, Socket } from "socket.io-client";
 
 const ENDPOINT = "http://localhost:5000";
