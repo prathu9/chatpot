@@ -9,6 +9,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm install && cd frontend && npm install && npm run build"
   },
+  "engines": {
+  "node": ">=20.10.0"
+},
   "overrides": {
     "node-sass": "npm:sass"
   },
